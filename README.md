@@ -46,3 +46,11 @@ Microservices monorepo
 - Create a branch
 - Add the resource to the proper file
 - Create a PR to main
+
+### FAQ
+
+- How to get the details of a resource?
+
+    > Run `terraform state show <RESOURCE_TYPE>.<RESOURCE_NAME>`. 
+    >
+    > Example aws_sns_topic.technical_orders_topic
