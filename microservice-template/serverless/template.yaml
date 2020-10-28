@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  <ADD A DESCRIPTION>
+Globals:
+  Function:
+    Timeout: 30
+Resources:
+  <YOUR_MS_NAME>:
+    Type: AWS::Serverless::Function
+    FunctionName: <YOUR_MS_NAME>
+    Properties:
+      CodeUri: .
+      Handler: src/app.lambdaHandler
+      Runtime: <YOUR LANGUAGE>
+      Environment:
+        Variables:
+      Events:
+        <SNS_NAME>:
+          Type: SNS
+          Properties:
+            Topic:
+              # New SNS Topic
+              # Ref: <SNS_NAME>
+              Ref: <SNS_ARN>
+# New SNS Topic
+#  <SNS_NAME>:
+#    Type: AWS::SNS::Topic
+#    Properties:
+#      DisplayName: <SNS_NAME>
+#      TopicName: <SNS_NAME>
+
+Outputs:
+# Uncomment if new SNS needed
+#  SNS_ARN:
+#    Description: SNS Topic Information
+#    Value:
+#      Ref: <SNS_NAME>
