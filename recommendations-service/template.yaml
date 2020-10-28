@@ -1,23 +1,23 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  <ADD A DESCRIPTION>
+  Service responsible of generate post sales recommendations
 Globals:
   Function:
     Timeout: 30
 Resources:
-  <YOUR_FUNC_NAME>:
+  updateRecomendations:
     Type: AWS::Serverless::Function
-    FunctionName: <YOUR_FUNC_NAME>
+    FunctionName: update-recommendations
     Properties:
       CodeUri: .
       Handler: src/app.lambdaHandler
-      Runtime: <YOUR LANGUAGE>
+      Runtime: nodejs12.x
       Environment:
         Variables:
       Events:
-        <SNS_NAME>:
+        orders-topic:
           Type: SNS
           Properties:
             Topic:
-              Ref: <SNS_ARN>
+              Ref: arn:aws:sns:us-west-2:881619806726:technical-orders-topic

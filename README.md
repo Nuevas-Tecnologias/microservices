@@ -3,6 +3,13 @@ Microservices monorepo
 
 ## Microservices 
 
+### Prerequisites
+
+- Default
+    - Install docker from [main guide](https://docs.docker.com/get-docker/)
+- Serverless 
+    - Install SAM from [main guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+ 
 ### Set up
 
 - Create a new branch
