@@ -20,19 +20,4 @@ Resources:
           Type: SNS
           Properties:
             Topic:
-              # New SNS Topic
-              # Ref: <SNS_NAME>
               Ref: <SNS_ARN>
-# New SNS Topic
-#  <SNS_NAME>:
-#    Type: AWS::SNS::Topic
-#    Properties:
-#      DisplayName: <SNS_NAME>
-#      TopicName: <SNS_NAME>
-
-Outputs:
-# Uncomment if new SNS needed
-#  SNS_ARN:
-#    Description: SNS Topic Information
-#    Value:
-#      Ref: <SNS_NAME>
