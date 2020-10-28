@@ -6,7 +6,7 @@ resource "aws_db_instance" "main" {
   engine_version       = "5.7"
   instance_class       = "db.t2.micro"
   name                 = "main"
-  username             = "new-architectures"
-  password             = "new-architectures"
+  username             = "newarchitectures"
+  password             = "newarchitectures"
   parameter_group_name = "default.mysql5.7"
 }

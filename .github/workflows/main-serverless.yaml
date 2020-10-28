@@ -1,39 +1,21 @@
-name: 'Terraform'
+name: 'Serverless'
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'terraform/**'
+      - 'serverless/**'
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  deploy-lambdas:
+    name: 'Deploy Lambdas'
     runs-on: ubuntu-latest
 
     defaults:
       run:
-        shell: bash
-        working-directory: ./terraform
+        working-directory: ./serverles
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          aws-region: sa-east-1
-
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 0.13.2
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
