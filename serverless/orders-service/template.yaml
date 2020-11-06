@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Service responsible of manage technical orders
+Globals:
+  Function:
+    Timeout: 30
+Resources:
+  saveTechOrder:
+    Type: AWS::Serverless::Function
+    FunctionName: save-tech-order
+    Properties:
+      CodeUri: .
+      Handler: src/app.lambdaHandler
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+      Events:
+        save-order-command-queue:
+          Type: SQS
+          Properties:
+            Topic:
+              Ref: arn:aws:sqs:us-west-2:881619806726:save-tech-order-command.fifo
