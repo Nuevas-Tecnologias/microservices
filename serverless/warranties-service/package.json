@@ -1,18 +1,18 @@
 {
   "name": "update-recommendations-service",
   "version": "1.0.0",
-  "description": "Service responsible of generate post sales recommendations",
-  "main": "src/app.js",
+  "description": "Service responsible of manage warranties",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.660.0"
+    "aws-sdk": "^2.787.0",
+    "knex": "^0.21.12",
+    "mysql": "^2.18.1"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "devDependencies": {
-    "jest": "^25.2.7",
     "@babel/preset-env": "^7.9.0",
-    "babel-jest": "^25.2.6"
+    "babel-jest": "^25.2.6",
+    "jest": "^25.2.7"
   },
   "jest": {
     "testEnvironment": "node",
