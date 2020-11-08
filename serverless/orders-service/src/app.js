@@ -30,7 +30,7 @@ exports.lambdaHandler = async (event, context) => {
             const ackMessage = {
                 type: "TechOrderCreated",
                 correlation_id,
-                tech_order_id: techOrderId,
+                tech_order_id: techOrderId[0],
             };
 
             await new Promise((resolve, reject) => sqs.sendMessage({
