@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Service responsible of manage service recommendations
+Globals:
+  Function:
+    Timeout: 30
+Resources:
+  recommendationsApi:
+    Type: AWS::Serverless::Function
+    FunctionName: recommendations-api
+    Properties:
+      CodeUri: .
+      Handler: src/recommendationsApi.lambdaHandler
+      Runtime: nodejs12.x
