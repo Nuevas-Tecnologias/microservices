@@ -40,7 +40,7 @@ Microservices monorepo
     ```
 2. Deploy stack with cloud formation:
     ```
-    sam deploy --stack-name productsJeltiSyncer --profile superfuds_col --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --s3-bucket sa-east-1-lambdas --s3-prefix syncProductsOnJelti --force-upload
+    sam deploy --stack-name <FUNCTION_NAME> --profile uniandes --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --s3-bucket us-west-2-lambdas --s3-prefix <FUNCTION_NAME> --force-upload --region us-west-2 
     ```
 
 ## Terraform
