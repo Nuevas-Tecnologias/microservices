@@ -19,30 +19,35 @@ const databaseConnection = require('knex')({
 exports.lambdaHandler = async (event, context) => {
 
     await Promise.all(event.Records.map(async record => {
-        const {
-            correlationId,
-            order,
-        } = JSON.parse(record.body);
+        try {
+            const {
+                correlationId,
+                order,
+            } = JSON.parse(record.body);
 
-        const techOrderId = await databaseConnection('tech_orders').insert(order).returning('id')
+            console.log(`Creating order ${JSON.stringify(order)}`);
+            const techOrderId = await databaseConnection('tech_orders').insert(order).returning('id')
 
-        const ackMessage = {
-            type: "TechOrderCreated",
-            correlationId,
-            techOrderId,
-        };
+            const ackMessage = {
+                type: "TechOrderCreated",
+                correlationId,
+                techOrderId,
+            };
 
-        await new Promise((resolve, reject) => sqs.sendMessage({
-            QueueUrl: "https://sqs.us-west-2.amazonaws.com/881619806726/tech-revision-ack.fifo",
-            MessageBody: JSON.stringify(ackMessage),
-            MessageGroupId: "Tech-revision-format"
-        }, function(err, data) {
-            if (err) {
-                console.log("Error", err);
-                reject()
-            } else {
-                resolve()
-            }
-        }));
+            await new Promise((resolve, reject) => sqs.sendMessage({
+                QueueUrl: "https://sqs.us-west-2.amazonaws.com/881619806726/tech-revision-ack.fifo",
+                MessageBody: JSON.stringify(ackMessage),
+                MessageGroupId: "Tech-revision-format"
+            }, function (err, data) {
+                if (err) {
+                    console.log("Error", err);
+                    reject()
+                } else {
+                    resolve()
+                }
+            }));
+        } catch (e) {
+          console.error(`Error proccesing format ${correlationId}`);
+        }
     }));
 };
