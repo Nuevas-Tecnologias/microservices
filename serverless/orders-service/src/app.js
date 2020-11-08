@@ -19,19 +19,18 @@ const databaseConnection = require('knex')({
 exports.lambdaHandler = async (event, context) => {
 
     await Promise.all(event.Records.map(async record => {
-        try {
             const {
-                correlationId,
+                correlation_id,
                 order,
             } = JSON.parse(record.body);
-
+        try {
             console.log(`Creating order ${JSON.stringify(order)}`);
             const techOrderId = await databaseConnection('tech_orders').insert(order).returning('id')
 
             const ackMessage = {
                 type: "TechOrderCreated",
-                correlationId,
-                techOrderId,
+                correlation_id,
+                tech_order_id: techOrderId,
             };
 
             await new Promise((resolve, reject) => sqs.sendMessage({
@@ -47,7 +46,7 @@ exports.lambdaHandler = async (event, context) => {
                 }
             }));
         } catch (e) {
-          console.error(`Error proccesing format ${correlationId}`);
+          console.error(`Error processing format ${correlation_id}`);
         }
     }));
 };
