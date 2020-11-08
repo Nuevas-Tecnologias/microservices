@@ -2,7 +2,7 @@
   "name": "update-recommendations-service",
   "version": "1.0.0",
   "description": "Service responsible of generate post sales recommendations",
-  "main": "src/app.js",
+  "main": "src/saveTechOrder.js",
   "license": "MIT",
   "dependencies": {
     "aws-sdk": "^2.660.0",
