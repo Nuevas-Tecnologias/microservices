@@ -46,6 +46,7 @@ exports.lambdaHandler = async (event, context) => {
         if (type === 'SERVICE_CREATED') {
             const {
                 registroServicio: {
+                    id,
                     nombreServicio: name,
                     placaVehiculo: car_plate,
                     idCentroServicio: tech_center_id,
@@ -53,6 +54,7 @@ exports.lambdaHandler = async (event, context) => {
             } = JSON.parse(record.Sns.Message);
 
             await databaseConnection('service_history').insert({
+                id,
                 name,
                 car_plate,
                 tech_center_id,
