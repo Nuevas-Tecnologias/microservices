@@ -9,7 +9,7 @@ Microservices monorepo
     - Install docker from [main guide](https://docs.docker.com/get-docker/)
 - Serverless 
     - Install SAM from [main guide](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
- 
+
 ### Set up
 
 - Create a new branch
@@ -17,6 +17,31 @@ Microservices monorepo
 - Copy the selected folder to a new folder named as your microservice
 - Fill all the vars rounded in angle brackets <> with your specific information
 - After finish make a PR to master
+
+## Serverless
+
+- Create file `~/.aws/credentials` with:
+
+    ```
+    [uniandes]
+    aws_access_key_id=<YOUR_ACCESS_KEY>
+    aws_secret_access_key=<YOUR_SECRET_ACCESS_KEY>
+    ```
+    
+    Keys could be obtained in aws console:
+    - Click in your name on the top right
+    - Go to option `My security credentials`
+    - Go to `Access keys`
+
+
+1. Build artifact:
+    ```
+    sam build
+    ```
+2. Deploy stack with cloud formation:
+    ```
+    sam deploy --stack-name <FUNCTION_NAME> --profile uniandes --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND --s3-bucket us-west-2-lambdas --s3-prefix <FUNCTION_NAME> --force-upload --region us-west-2 
+    ```
 
 ## Terraform
 

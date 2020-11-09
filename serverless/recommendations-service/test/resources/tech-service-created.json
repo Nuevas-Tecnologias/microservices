@@ -1,0 +1,31 @@
+{
+  "Records": [
+    {
+      "EventSource": "aws:sns",
+      "EventVersion": "1.0",
+      "EventSubscriptionArn": "arn:{partition}:sns:EXAMPLE",
+      "Sns": {
+        "Type": "Notification",
+        "MessageId": "95df01b4-ee98-5cb9-9903-4c221d41eb5e",
+        "TopicArn": "arn:{partition}:sns:EXAMPLE",
+        "Subject": "TestInvoke",
+        "Message": "{\"type\":\"SERVICE_CREATED\",\"registroServicio\":{\"id\":1,\"idOrdenServicio\":1,\"idCentroServicio\":1,\"estado\":\"terminado\",\"nombreServicio\":\"cambio Aceite\",\"nombreTecnico\":\"Juan Perez\",\"fechaInicio\":\"06/01/2020\",\"fechaFin\":\"06/01/2020\",\"placaVehiculo\":\"UGX690\",\"autopartesIntervenidas\":[{\"id\":2,\"idUnicoAutoparte\":\"AAXXX20\",\"nombre\":\"Filtro Aceite\",\"operacion\":\"instalada\",\"resgistroServicio\":null},{\"id\":3,\"idUnicoAutoparte\":\"AAXXX21\",\"nombre\":\"Filtro Aire\",\"operacion\":\"instalada\",\"resgistroServicio\":null}]}}",
+        "Timestamp": "1970-01-01T00:00:00Z",
+        "SignatureVersion": "1",
+        "Signature": "EXAMPLE",
+        "SigningCertUrl": "EXAMPLE",
+        "UnsubscribeUrl": "EXAMPLE",
+        "MessageAttributes": {
+          "Test": {
+            "Type": "String",
+            "Value": "TestString"
+          },
+          "TestBinary": {
+            "Type": "Binary",
+            "Value": "TestBinary"
+          }
+        }
+      }
+    }
+  ]
+}
