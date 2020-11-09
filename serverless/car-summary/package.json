@@ -2,10 +2,11 @@
   "name": "service-center-service",
   "version": "1.0.0",
   "description": "Service responsible of create service centers",
-  "main": "src/getServiceCenterByNameCommand.js",
+  "main": "src/saveServiceCenter.js",
   "license": "MIT",
   "dependencies": {
     "aws-sdk": "^2.660.0",
+    "axios": "^0.21.0",
     "knex": "^0.21.12",
     "mysql": "^2.18.1"
   },
