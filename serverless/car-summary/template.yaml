@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Service responsible of api composition related with car summary
+Globals:
+  Function:
+    Timeout: 30
+Resources:
+  carSummaryApi:
+    Type: AWS::Serverless::Function
+    FunctionName: car-summary-api
+    Properties:
+      CodeUri: .
+      Handler: src/carSummaryApi.lambdaHandler
+      Runtime: nodejs12.x

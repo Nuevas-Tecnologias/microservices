@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serviceRegisterMS-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serviceRegisterMS
+  template:
+    metadata:
+      labels:
+        app: serviceRegisterMS
+    spec:
+      containers:
+        - name: serviceRegisterMS-ms
+          image: 881619806726.dkr.ecr.us-east-2.amazonaws.com/serviceRegisterMS/serviceRegisterMS-ms:latest
+          imagePullPolicy: allways
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+      imagePullSecrets:
+        - name: regcred

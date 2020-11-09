@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:mysql://terraform-20201028182302976100000001.cgrpasjjlw1k.us-west-2.rds.amazonaws.com/tech_service?useSSL=false
+    username: newarchitectures
+    password: newarchitectures
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+cloud:
+  aws:
+    region:
+      static: us-west-2
+      auto: false
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    end-point:
+      uriCommad: https://sqs.us-west-2.amazonaws.com/881619806726/create-service-register-bulk-command.fifo
+      uriReplay: https://sqs.us-west-2.amazonaws.com/881619806726/tech-revision-ack.fifo
+      arnSNS: arn:aws:sns:us-west-2:881619806726:technical-orders-topic
+server:
+  port: 9191
+    
+      
