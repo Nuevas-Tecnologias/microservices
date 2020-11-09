@@ -17,11 +17,13 @@ import (
 )
 
 type MessageType struct {
-	Type string `json:"type""`
+	Type          string `json:"type""`
+	CorrelationId int    `json:"correlationId""`
 }
 type NewRequest struct {
 	Name          string `json:"name""`
 	CorrelationId int    `json:"correlationId""`
+	Data          string `json:"data""`
 }
 type FormRegistered struct {
 	Id            int `json:"id""`
@@ -43,6 +45,44 @@ type MessageEvent struct {
 	Error         string
 	CreatedAt     string
 	UpdatedAt     string
+}
+type DataServiceCenterSend struct {
+	CorrelationId     int    `json:"correlation_id""`
+	ServiceCenterName string `json:"service_center_name""`
+}
+type DataServiceCenterReceived struct {
+	CorrelationId     int    `json:"correlation_id""`
+	ServiceCenterName string `json:"service_center_name""`
+	ServiceCenterId   int    `json:"service_center_id""`
+}
+type DataOrderSend struct {
+	CorrelationId int              `json:"correlation_id""`
+	Order         OrderInformation `json:"order""`
+}
+type OrderInformation struct {
+	ServiceCenterId int    `json:"service_center_id""`
+	CarPlate        int    `json:"car_plate""`
+	OrderDate       string `json:"order_date""`
+}
+type DataServiceSend struct {
+	CorrelationId int                  `json:"correlationId""`
+	Services      []ServiceInformation `json:"registrosServicio""`
+}
+type ServiceInformation struct {
+	IdOrderService    int    `json:"idOrdenServicio""`
+	IdServiceCenter   int    `json:"idCentroServicio""`
+	Status            string `json:"estado""`
+	ServiceName       string `json:"nombreServicio""`
+	TechnicalUserName string `json:"nombreTecnico""`
+	InitialDate       string `json:"fechaInicio""`
+	FinalDate         string `json:"fechaFin""`
+	Vehicle           string `json:"placaVehiculo""`
+	Parts             []Part `json:"autopartesIntervenidas""`
+}
+type Part struct {
+	Id        string `json:"idUnicoAutoparte""`
+	Name      string `json:"nombre""`
+	Operation string `json:"operacion""`
 }
 
 const (
@@ -74,7 +114,7 @@ func handler(ctx context.Context, sqsEvent events.SQSEvent) (events.APIGatewayPr
 		return messageData, nil
 	}
 	return events.APIGatewayProxyResponse{
-		Body:       fmt.Sprintf("Hello world"),
+		Body:       fmt.Sprintf("Hello world ser"),
 		StatusCode: 200,
 	}, nil
 }
@@ -127,29 +167,32 @@ func getMessageData(mt MessageType, msg string) (events.APIGatewayProxyResponse,
 func newRequestStrategy(msg string) error {
 	messageData := NewRequest{}
 	json.Unmarshal([]byte(msg), &messageData)
-	lastId, rowCnt, err := insertMessageEvent("CREATED", "New request incoming", 0)
+	lastId, _, err := insertMessageEvent("CREATED", "New request incoming", 0)
 	if err != nil {
 		return err
 	}
-	ids := fmt.Sprintf("%v - %v", lastId, rowCnt)
-	fmt.Println("Ids: ", ids)
 	err = updateMessageEventCorrelationId(lastId, lastId)
 	if err != nil {
 		return err
 	}
-	//err = writeMessageOnQueue(RegisterService, "data")
+	messageData.CorrelationId = int(lastId)
+	data, err := dataServiceCenter(messageData)
 	if err != nil {
 		return err
 	}
+	fmt.Println("dataSent: ", data)
+	err = writeMessageOnQueue(RegisterService, data)
+	// if err != nil {
+	// 	return err
+	// }
 	return nil
 }
 
 //Form request created
 func formStrategy(msg string) error {
-	messageData := FormRegistered{}
+	messageData := DataServiceCenterReceived{}
 	json.Unmarshal([]byte(msg), &messageData)
 	ans, err := searchMessageLog(messageData.CorrelationId)
-	fmt.Println("Type: ", ans.Id)
 	if err != nil {
 		updateMessageEvent(messageData.CorrelationId, "ERROR", err.Error())
 		return err
@@ -161,16 +204,19 @@ func formStrategy(msg string) error {
 		err = errors.New("Record already in the current status")
 		return err
 	}
-	//err = writeMessageOnQueue(RegisterService, "data")
+	data, err := dataOrder(messageData, ans)
 	if err != nil {
 		return err
 	}
-	lastId, rowCnt, err := insertMessageEvent("SERCENASSIGNED", "New request incoming", messageData.CorrelationId)
+	fmt.Println("dataSent: ", data)
+	err = writeMessageOnQueue(RegisterService, data)
+	// if err != nil {
+	// 	return err
+	// }
+	_, _, err = insertMessageEvent("SERCENASSIGNED", "New request incoming", messageData.CorrelationId)
 	if err != nil {
 		return err
 	}
-	ids := fmt.Sprintf("%v - %v", lastId, rowCnt)
-	fmt.Println("Ids: ", ids)
 	//updateMessageEvent(messageData.CorrelationId, "SERCENASSIGNED", " ")
 	return nil
 }
@@ -191,17 +237,20 @@ func orderStrategy(msg string) error {
 		err = errors.New("Record already in the current status")
 		return err
 	}
-	//err = writeMessageOnQueue(RegisterService, "data")
-	if err != nil {
-		updateMessageEvent(messageData.CorrelationId, "ERROR", err.Error())
-		return err
-	}
-	lastId, rowCnt, err := insertMessageEvent("ORDERCREATED", "New request incoming", messageData.CorrelationId)
+	data, err := dataService(messageData, ans)
 	if err != nil {
 		return err
 	}
-	ids := fmt.Sprintf("%v - %v", lastId, rowCnt)
-	fmt.Println("Ids: ", ids)
+	fmt.Println("dataSent: ", data)
+	err = writeMessageOnQueue(RegisterService, data)
+	// if err != nil {
+	// 	updateMessageEvent(messageData.CorrelationId, "ERROR", err.Error())
+	// 	return err
+	// }
+	_, _, err = insertMessageEvent("ORDERCREATED", "New request incoming", messageData.CorrelationId)
+	if err != nil {
+		return err
+	}
 	//updateMessageEvent(messageData.CorrelationId, "ORDERCREATED", " ")
 	return nil
 }
@@ -235,6 +284,75 @@ func serviceStrategy(msg string) error {
 	fmt.Println("Ids: ", ids)
 	//updateMessageEvent(messageData.CorrelationId, "SERVICECREATED", " ")
 	return nil
+}
+
+//Send Service Center command
+func dataServiceCenter(data NewRequest) (string, error) {
+	dataServiceCenter := DataServiceCenterSend{}
+	dataServiceCenter.CorrelationId = data.CorrelationId
+	dataServiceCenter.ServiceCenterName = "Trial name"
+	dataSend, err := json.Marshal(dataServiceCenter)
+	if err != nil {
+		fmt.Println("Error marshalling")
+		return "", err
+	}
+	return string(dataSend), nil
+}
+
+//Send order
+func dataOrder(serviceCenter DataServiceCenterReceived, data MessageEvent) (string, error) {
+	dataOrder := DataOrderSend{}
+
+	dataOrder.CorrelationId = data.CorrelationId
+	dataOrder.Order.ServiceCenterId = serviceCenter.ServiceCenterId
+	dataOrder.Order.CarPlate = 3
+	dataOrder.Order.OrderDate = "2020-10-10"
+	dataSend, err := json.Marshal(dataOrder)
+	if err != nil {
+		fmt.Println("Error marshalling.")
+		return "", err
+	}
+	return string(dataSend), nil
+}
+
+//Send service
+func dataService(order OrderData, data MessageEvent) (string, error) {
+	dataOrder := DataServiceSend{}
+
+	dataOrder.CorrelationId = data.CorrelationId
+	var parts = []Part{
+		Part{
+			Id:        "AAXXX20",
+			Name:      "Filtro Aceite",
+			Operation: "instalada",
+		},
+		Part{
+			Id:        "AAXXX21",
+			Name:      "Filtro Aire",
+			Operation: "instalada",
+		},
+	}
+	var services = []ServiceInformation{
+		ServiceInformation{
+			IdOrderService:    order.OrderId,
+			IdServiceCenter:   1,
+			Status:            "terminado",
+			ServiceName:       "cambio Aceite",
+			TechnicalUserName: "Juan gomez perez",
+			InitialDate:       "06/01/2020",
+			FinalDate:         "06/01/2020",
+			Vehicle:           "UGX690",
+			Parts:             parts,
+		},
+	}
+	dataOrder.Services = services
+
+	dataSend, err := json.Marshal(dataOrder)
+	if err != nil {
+		fmt.Println("Error marshalling.")
+		return "", err
+	}
+	return string(dataSend), nil
 }
 
 //General response
