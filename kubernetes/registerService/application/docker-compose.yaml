@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  register-service:
+    container_name: register-service
+    ports:
+      - "8000:8000"
+    build:
+      context: .
+    environment:
+      AWS_SECREY_KEY: ${AWS_SECREY_KEY}
+      AWS_APP_KEY: ${AWS_APP_KEY}
