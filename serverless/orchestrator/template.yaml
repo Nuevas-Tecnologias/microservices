@@ -10,7 +10,7 @@ Resources:
     Type: AWS::Serverless::Function
     FunctionName: orquestrator
     Properties:
-      CodeUri: orquestrator/
+      CodeUri: src
       Handler: orquestrator
       Runtime: go1.x
       Tracing: Active 
