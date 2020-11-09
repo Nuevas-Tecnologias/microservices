@@ -15,11 +15,11 @@ exports.lambdaHandler = async (event, context) => {
         }
     } = event;
 
-    const orders = await databaseConnection('service-center').select().where('name', name);
+    const serviceCenter = await databaseConnection('service-center').select().where('name', name);
 
     return {
         "statusCode": 200,
-        "body": JSON.stringify(service-center),
+        "body": JSON.stringify(serviceCenter),
         "isBase64Encoded": false
     };
 };
