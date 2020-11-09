@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: <YOUR_MS_NAME>-deployment
+  name: serviceRegiterMS-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: <YOUR_MS_NAME>
+      app: serviceRegiterMS
   template:
     metadata:
       labels:
-        app: <YOUR_MS_NAME>
+        app: serviceRegiterMS
     spec:
       containers:
-        - name: <YOUR_MS_NAME>-ms
+        - name: serviceRegiterMS-ms
 #          You need to create the repository in AWS ECR first
-          image: 881619806726.dkr.ecr.us-east-2.amazonaws.com/<YOUR_MS_NAME>/<YOUR_MS_NAME>-ms:latest
+          image: 881619806726.dkr.ecr.us-east-2.amazonaws.com/serviceRegiterMS/serviceRegiterMS-ms:latest
           imagePullPolicy: allways
           ports:
             - containerPort: 80
