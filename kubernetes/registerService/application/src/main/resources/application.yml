@@ -15,9 +15,6 @@ cloud:
     region:
       static: us-west-2
       auto: false
-    credentials:
-      access-key: AKIAIMML6HFZOVP3R6CQ
-      secret-key: 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
     end-point:
       uriCommad: https://sqs.us-west-2.amazonaws.com/881619806726/create-service-register-bulk-command.fifo
       uriReplay: https://sqs.us-west-2.amazonaws.com/881619806726/tech-revision-ack.fifo
