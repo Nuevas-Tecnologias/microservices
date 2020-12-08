@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Service responsible of manage technical orders
+Globals:
+  Function:
+    Timeout: 30
+Resources:
+  rpaApi:
+    Type: AWS::Serverless::Function
+    FunctionName: rpa-api
+    Properties:
+      CodeUri: .
+      Handler: src/rpaApi.lambdaHandler
+      Runtime: nodejs12.x
