@@ -9,7 +9,7 @@ const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 const sns = new AWS.SNS({apiVersion: '2012-11-05'});
 
 // Blockchain
-const { createTransaction, getTransactions, getBatchInfo } = require('./blockchain-gateway');
+const { createTransaction, getTransactions, getBatchInfo, _hash } = require('./blockchain-gateway');
 
 // Database
 const databaseConnection = require('knex')({
@@ -22,8 +22,9 @@ const databaseConnection = require('knex')({
     }
 });
 
-const _hash = (x) =>
-    crypto.createHash('sha512').update(x).digest('hex').toLowerCase().substring(0, 64)
+const sleep = (ms) => new Promise((resolve) => {
+    setTimeout(resolve, ms);
+});
 
 exports.lambdaHandler = async (event, context) => {
 
@@ -37,6 +38,8 @@ exports.lambdaHandler = async (event, context) => {
 
 
         const response = await createTransaction({data: _hash(JSON.stringify(order))});
+
+        await sleep(2000); // Give some time to BCS to process the message
 
         const batchInfo = await getBatchInfo(response.data.link);
 

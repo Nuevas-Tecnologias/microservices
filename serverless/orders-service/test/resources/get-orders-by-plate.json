@@ -4,7 +4,7 @@
   "path": "/orders",
   "httpMethod": "GET",
   "pathParameters": {
-    "proxy": "1"
+    "proxy": "ABC789"
   },
   "headers": {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",

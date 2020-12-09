@@ -8,6 +8,8 @@ const databaseConnection = require('knex')({
     }
 });
 
+const { getTransaction, _hash } = require('./blockchain-gateway');
+
 exports.lambdaHandler = async (event, context) => {
     const {
         pathParameters: {
@@ -17,9 +19,26 @@ exports.lambdaHandler = async (event, context) => {
 
     const orders = await databaseConnection('tech_orders').select().where('car_plate', carPlate);
 
+    const validatedOrders = await Promise.all(orders.map((order => new Promise(async (resolve) => {
+            const transaction = await getTransaction(order.transaction_id);
+            const orderHash = transaction.split('@')[1];
+
+            const orderData = {
+                service_center_id: order.service_center_id,
+                order_date: order.order_date,
+                car_plate: order.car_plate,
+            }
+
+            resolve({
+                ...order,
+                trustworthy: _hash(JSON.stringify(orderData)) === orderHash
+            });
+        })
+    )));
+
     return {
         "statusCode": 200,
-        "body": JSON.stringify(orders),
+        "body": JSON.stringify(validatedOrders),
         "isBase64Encoded": false
     };
 };

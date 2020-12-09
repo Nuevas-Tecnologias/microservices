@@ -13,6 +13,9 @@ const signer = (new CryptoFactory(context)).newSigner(privateKey)
 
 const HOST = 'http://sawtooth-rest-api-default:8008';
 
+const _hash = (x) =>
+    crypto.createHash('sha512').update(x).digest('hex').toLowerCase().substring(0, 64)
+
 const sendRequest = (payload) => {
 
     const payloadBytes = cbor.encode(payload);
@@ -80,8 +83,15 @@ const getTransactions = (batch) => {
         .then((response) => response.data.data.header.transaction_ids);
 }
 
+const getTransaction = async (transaction) => {
+    const response = await axios.get(`${HOST}/transactions/${transaction}`);
+    return Buffer.from(response.data.data.payload, 'base64').toString('ascii');
+}
+
 module.exports = {
     createTransaction,
+    getTransaction,
     getTransactions,
     getBatchInfo,
+    _hash,
 }
