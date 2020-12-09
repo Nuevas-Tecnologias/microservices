@@ -1,6 +1,6 @@
 const { TransactionProcessor } = require('sawtooth-sdk/processor')
 
-const SimpleStoreHandler = require('./handler')
+const SimpleStoreHandler = require('./simpleProcessor')
 const transactionProcessor = new TransactionProcessor("tcp://sawtooth-validator-default:4004")
 
 transactionProcessor.addHandler(new SimpleStoreHandler())

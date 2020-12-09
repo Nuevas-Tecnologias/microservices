@@ -14,12 +14,14 @@ class SimpleStoreHandler extends TransactionHandler {
         let simpleStoreState = new SimpleStoreState(context);
 
         if (payload.action === 'get') {
+            console.log(`getting ${payload.data}`);
             return simpleStoreState.getValue(payload.data)
         } else  if (payload.action === 'set') {
+            console.log(`setting ${payload.data}`);
             return simpleStoreState.setValue(payload.data)
         } else {
             throw  new InvalidTransaction(
-                `Action must be create, delete, or take not ${payload.action}`
+                `Action must be get or set not ${payload.action}`
             )
         }
     }

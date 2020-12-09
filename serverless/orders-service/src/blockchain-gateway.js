@@ -5,12 +5,7 @@ const cbor = require('cbor');
 const axios = require('axios');
 const crypto = require('crypto')
 
-const hash = (x) =>
-    crypto.createHash('sha512').update(x).digest('hex').toLowerCase()
-
-const INT_KEY_FAMILY = 'intkey'
-const INT_KEY_NAMESPACE = hash(INT_KEY_FAMILY).substring(0, 6)
-const address = INT_KEY_NAMESPACE + hash('foo').slice(-64)
+const TP_FAMILY = 'simplestore';
 
 const context = createContext('secp256k1')
 const privateKey = context.newRandomPrivateKey()
@@ -18,20 +13,15 @@ const signer = (new CryptoFactory(context)).newSigner(privateKey)
 
 const HOST = 'http://sawtooth-rest-api-default:8008';
 
-const createTransaction = ({data}) => {
-
-    const payload = {
-        action: 'set',
-        data,
-    };
+const sendRequest = (payload) => {
 
     const payloadBytes = cbor.encode(payload);
 
     const transactionHeaderBytes = protobuf.TransactionHeader.encode({
-        familyName: 'simplestore',
+        familyName: TP_FAMILY,
         familyVersion: '1.0',
-        inputs: [address],
-        outputs: [address],
+        inputs: ['917479'],
+        outputs: ['917479'],
         signerPublicKey: signer.getPublicKey().asHex(),
         // In this example, we're signing the batch with the same private key,
         // but the batch can be signed by another party, in which case, the
@@ -72,23 +62,26 @@ const createTransaction = ({data}) => {
     });
 }
 
-const getTransaction = ({ address }) => {
-    axios({
-        method: 'get',
-        url: `${HOST}/state/${address}`,
-        headers: {'Content-Type': 'application/json'}
-    })
-        .then(function (response) {
-            let base = Buffer.from(response.data.data, 'base64');
-            let stateValue = cbor.decodeFirstSync(base);
-            console.log(stateValue);
-        })
-        .catch(err => {
-            console.log(err);
-        });
+const createTransaction = ({data}) => {
+    const payload = {
+        action: 'set',
+        data,
+    };
+    return sendRequest(payload);
+}
+
+const getBatchInfo = (batchLink) => {
+    return axios.get(batchLink)
+        .then((response) => response.data.data[0]);
+}
+
+const getTransactions = (batch) => {
+    return axios.get(`${HOST}/batches/${batch}`)
+        .then((response) => response.data.data.header.transaction_ids);
 }
 
 module.exports = {
     createTransaction,
-    getTransaction,
+    getTransactions,
+    getBatchInfo,
 }
