@@ -29,10 +29,16 @@ exports.lambdaHandler = async (event, context) => {
                 car_plate: order.car_plate,
             }
 
-            resolve({
-                ...order,
-                trustworthy: _hash(JSON.stringify(orderData)) === orderHash
-            });
+            const {transaction_id, ...filteredOrder} = order;
+
+            const validatedOrder = {
+                ...filteredOrder,
+                blockchain:{
+                    transaction_id,
+                    trustworthy: _hash(JSON.stringify(orderData)) === orderHash
+                }
+            }
+            resolve(validatedOrder);
         })
     )));
 

@@ -11,7 +11,7 @@ const context = createContext('secp256k1')
 const privateKey = context.newRandomPrivateKey()
 const signer = (new CryptoFactory(context)).newSigner(privateKey)
 
-const HOST = 'http://sawtooth-rest-api-default:8008';
+const HOST = 'http://ec2-34-220-230-17.us-west-2.compute.amazonaws.com:8008';
 
 const _hash = (x) =>
     crypto.createHash('sha512').update(x).digest('hex').toLowerCase().substring(0, 64)
