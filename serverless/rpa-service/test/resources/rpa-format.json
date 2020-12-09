@@ -1,10 +1,10 @@
 {
-  "body": "",
+  "body": "{\"type\": \"TechRequestReceived\", \"name\": \"Nombre de prueba\"}",
   "resource": "/{proxy+}",
   "path": "/orders",
   "httpMethod": "GET",
   "pathParameters": {
-    "proxy": "ABC789"
+    "proxy": "1"
   },
   "headers": {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",

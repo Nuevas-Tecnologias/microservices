@@ -1,5 +1,6 @@
 // Load the AWS SDK for Node.js
 const AWS = require('aws-sdk');
+const crypto = require("crypto");
 // Set the region
 AWS.config.update({region: 'us-west-2'});
 
@@ -7,6 +8,10 @@ AWS.config.update({region: 'us-west-2'});
 const sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 const sns = new AWS.SNS({apiVersion: '2012-11-05'});
 
+// Blockchain
+const { createTransaction, getTransactions, getBatchInfo, _hash } = require('./blockchain-gateway');
+
+// Database
 const databaseConnection = require('knex')({
     client: 'mysql',
     connection: {
@@ -15,6 +20,10 @@ const databaseConnection = require('knex')({
         password : 'newarchitectures',
         database : 'tech_orders',
     }
+});
+
+const sleep = (ms) => new Promise((resolve) => {
+    setTimeout(resolve, ms);
 });
 
 exports.lambdaHandler = async (event, context) => {
@@ -26,7 +35,17 @@ exports.lambdaHandler = async (event, context) => {
         } = JSON.parse(record.body);
 
         console.log(`Creating order ${JSON.stringify(order)}`);
-        const techOrderId = await databaseConnection('tech_orders').insert(order).returning('id')
+
+
+        const response = await createTransaction({data: _hash(JSON.stringify(order))});
+
+        await sleep(2000); // Give some time to BCS to process the message
+
+        const batchInfo = await getBatchInfo(response.data.link);
+
+        const transactions = await getTransactions(batchInfo.id);
+
+        const techOrderId = await databaseConnection('tech_orders').insert({...order, transaction_id: transactions[0]}).returning('id')
 
         const ackMessage = {
             type: "TechOrderCreated",

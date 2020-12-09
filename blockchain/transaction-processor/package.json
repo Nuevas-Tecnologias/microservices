@@ -1,19 +1,12 @@
 {
-  "name": "update-recommendations-service",
+  "name": "simple-transaction-processor",
   "version": "1.0.0",
   "description": "Service responsible of generate post sales recommendations",
   "main": "src/saveTechOrder.js",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.660.0",
-    "knex": "^0.21.12",
-    "mysql": "^2.18.1",
-    "axios": "^0.20.0",
-    "cbor": "^5.1.0",
-    "dotenv": "^8.2.0",
-    "lodash": "^4.17.20",
     "sawtooth-sdk": "^1.0.5",
-    "underscore": "^1.11.0"
+    "cbor": "^5.1.0"
   },
   "scripts": {},
   "devDependencies": {

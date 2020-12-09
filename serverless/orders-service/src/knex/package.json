@@ -1,0 +1,12 @@
+{
+  "name": "order-service-knex",
+  "version": "1.0.0",
+  "description": "order-service-knex",
+  "license": "MIT",
+  "dependencies": {
+    "knex": "^0.21.12",
+    "mysql": "^2.18.1"
+  },
+  "scripts": {},
+  "devDependencies": {}
+}
