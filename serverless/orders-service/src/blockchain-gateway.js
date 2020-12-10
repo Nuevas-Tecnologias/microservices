@@ -11,7 +11,7 @@ const context = createContext('secp256k1')
 const privateKey = context.newRandomPrivateKey()
 const signer = (new CryptoFactory(context)).newSigner(privateKey)
 
-const HOST = `${process.env.BCS_HOST}:8008`;
+const HOST = `${process.env.BCS_HOST}`;
 
 const _hash = (x) =>
     crypto.createHash('sha512').update(x).digest('hex').toLowerCase().substring(0, 64)

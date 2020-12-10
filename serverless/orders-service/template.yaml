@@ -28,3 +28,6 @@ Resources:
       CodeUri: .
       Handler: src/techOrdersApi.lambdaHandler
       Runtime: nodejs12.x
+      Environment:
+        Variables:
+          BCS_HOST: TBD
