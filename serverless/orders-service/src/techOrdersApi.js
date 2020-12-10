@@ -20,7 +20,10 @@ exports.lambdaHandler = async (event, context) => {
     const orders = await databaseConnection('tech_orders').select().where('car_plate', carPlate);
 
     const validatedOrders = await Promise.all(orders.map((order => new Promise(async (resolve) => {
-            const transaction = await getTransaction(order.transaction_id);
+        let blockchain = {}
+        const {transaction_id, ...filteredOrder} = order;
+        if (transaction_id) {
+            const transaction = await getTransaction(transaction_id);
             const orderHash = transaction.split('@')[1];
 
             const orderData = {
@@ -29,17 +32,18 @@ exports.lambdaHandler = async (event, context) => {
                 car_plate: order.car_plate,
             }
 
-            const {transaction_id, ...filteredOrder} = order;
-
-            const validatedOrder = {
-                ...filteredOrder,
-                blockchain:{
-                    transaction_id,
-                    trustworthy: _hash(JSON.stringify(orderData)) === orderHash
-                }
+            blockchain = {
+                transaction_id,
+                trustworthy: _hash(JSON.stringify(orderData)) === orderHash
             }
-            resolve(validatedOrder);
-        })
+        }
+
+        const validatedOrder = {
+            ...filteredOrder,
+            blockchain,
+        }
+        resolve(validatedOrder);
+    })
     )));
 
     return {
