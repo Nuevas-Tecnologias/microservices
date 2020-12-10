@@ -13,6 +13,9 @@ Resources:
       CodeUri: .
       Handler: src/saveTechOrder.lambdaHandler
       Runtime: nodejs12.x
+      Environment:
+        Variables:
+          BCS_HOST: TBD
       Events:
         MySQSEvent:
           Type: SQS
