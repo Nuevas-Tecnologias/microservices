@@ -16,6 +16,7 @@ Resources:
       Environment:
         Variables:
           BCS_HOST: TBD
+          LD_LIBRARY_PATH: /var/task/node_modules/zeromq/lib:$LD_PRIMARY_PATH:$LD_LIBRARY_PATH
       Events:
         MySQSEvent:
           Type: SQS
@@ -31,3 +32,4 @@ Resources:
       Environment:
         Variables:
           BCS_HOST: TBD
+          LD_LIBRARY_PATH: /var/task/node_modules/zeromq/lib:$LD_PRIMARY_PATH:$LD_LIBRARY_PATH
