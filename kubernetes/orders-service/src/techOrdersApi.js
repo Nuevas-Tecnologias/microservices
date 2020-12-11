@@ -10,12 +10,7 @@ const databaseConnection = require('knex')({
 
 const { getTransaction, _hash } = require('./blockchain-gateway');
 
-exports.lambdaHandler = async (event, context) => {
-    const {
-        pathParameters: {
-            proxy: carPlate
-        }
-    } = event;
+export const getOrder = async (carPlate) => {
 
     const orders = await databaseConnection('tech_orders').select().where('car_plate', carPlate);
 
@@ -46,9 +41,5 @@ exports.lambdaHandler = async (event, context) => {
     })
     )));
 
-    return {
-        "statusCode": 200,
-        "body": JSON.stringify(validatedOrders),
-        "isBase64Encoded": false
-    };
+    return validatedOrders;
 };
