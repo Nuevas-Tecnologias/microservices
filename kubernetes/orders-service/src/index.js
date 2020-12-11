@@ -7,6 +7,10 @@ import { getOrder } from "./techOrdersApi";
 
 const port = parseInt(process.env.PORT || 3000, 10);
 
+const AWS = require('aws-sdk');
+
+AWS.config.update({region: 'us-west-2'});
+
 const app = express();
 
 app.use(bodyParser.json());
