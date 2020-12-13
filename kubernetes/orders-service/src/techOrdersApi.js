@@ -19,18 +19,25 @@ export const getOrder = async (carPlate) => {
             let blockchain = {}
             const {transaction_id, ...filteredOrder} = order;
             if (transaction_id) {
-                const transaction = await getTransaction(transaction_id);
-                const orderHash = transaction.split('@')[1];
+                try {
+                    const transaction = await getTransaction(transaction_id);
+                    const orderHash = transaction.split('@')[1];
 
-                const orderData = {
-                    service_center_id: order.service_center_id,
-                    order_date: order.order_date,
-                    car_plate: order.car_plate,
-                }
+                    const orderData = {
+                        service_center_id: order.service_center_id,
+                        order_date: order.order_date,
+                        car_plate: order.car_plate,
+                    }
 
-                blockchain = {
-                    transaction_id,
-                    trustworthy: _hash(JSON.stringify(orderData)) === orderHash
+                    blockchain = {
+                        transaction_id,
+                        trustworthy: _hash(JSON.stringify(orderData)) === orderHash
+                    }
+                } catch (err) {
+                    blockchain = {
+                        transaction_id,
+                        trustworthy: false
+                    }
                 }
             }
 
@@ -39,7 +46,7 @@ export const getOrder = async (carPlate) => {
                 blockchain,
             }
             resolve(validatedOrder);
-        }).catch((err) => console.error(err))
+        })
     )));
 
     return validatedOrders;
