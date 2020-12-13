@@ -14,31 +14,32 @@ export const getOrder = async (carPlate) => {
 
     const orders = await databaseConnection('tech_orders').select().where('car_plate', carPlate);
 
-    const validatedOrders = await Promise.all(orders.map((order => new Promise(async (resolve) => {
-        let blockchain = {}
-        const {transaction_id, ...filteredOrder} = order;
-        if (transaction_id) {
-            const transaction = await getTransaction(transaction_id);
-            const orderHash = transaction.split('@')[1];
+    const validatedOrders = await Promise.all(orders.map((order =>
+        new Promise(async (resolve) => {
+            let blockchain = {}
+            const {transaction_id, ...filteredOrder} = order;
+            if (transaction_id) {
+                const transaction = await getTransaction(transaction_id);
+                const orderHash = transaction.split('@')[1];
 
-            const orderData = {
-                service_center_id: order.service_center_id,
-                order_date: order.order_date,
-                car_plate: order.car_plate,
+                const orderData = {
+                    service_center_id: order.service_center_id,
+                    order_date: order.order_date,
+                    car_plate: order.car_plate,
+                }
+
+                blockchain = {
+                    transaction_id,
+                    trustworthy: _hash(JSON.stringify(orderData)) === orderHash
+                }
             }
 
-            blockchain = {
-                transaction_id,
-                trustworthy: _hash(JSON.stringify(orderData)) === orderHash
+            const validatedOrder = {
+                ...filteredOrder,
+                blockchain,
             }
-        }
-
-        const validatedOrder = {
-            ...filteredOrder,
-            blockchain,
-        }
-        resolve(validatedOrder);
-    })
+            resolve(validatedOrder);
+        }).catch((err) => console.error(err))
     )));
 
     return validatedOrders;
